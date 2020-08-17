@@ -1,4 +1,4 @@
-package com.duyha.mariobros.sprites
+package com.duyha.mariobros.sprites.enemies
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite

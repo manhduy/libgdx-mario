@@ -21,12 +21,10 @@ import com.duyha.mariobros.items.ItemDef
 import com.duyha.mariobros.items.Mushroom
 import com.duyha.mariobros.scenes.GameOverScreen
 import com.duyha.mariobros.scenes.Hud
-import com.duyha.mariobros.sprites.Goomba
 import com.duyha.mariobros.sprites.Mario
 import com.duyha.mariobros.sprites.State
 import com.duyha.mariobros.tools.B2WorldCreator
 import com.duyha.mariobros.tools.WorldContactListener
-import java.util.*
 import java.util.concurrent.LinkedBlockingDeque
 
 class PlayScreen(private val game: MarioBros) : Screen {
@@ -97,7 +95,7 @@ class PlayScreen(private val game: MarioBros) : Screen {
         world.step(1/60f, 6, 2)
 
         player.update(dt)
-        for (enemy in creator.goombas) {
+        for (enemy in creator.getEnemies()) {
             enemy.update(dt)
             if (enemy.x < player.x + 224 / MarioBros.PPM) {
                 enemy.body.isActive = true
@@ -151,7 +149,7 @@ class PlayScreen(private val game: MarioBros) : Screen {
         game.batch.projectionMatrix = gameCamera.combined
         game.batch.begin()
         player.draw(game.batch)
-        for (enemy in creator.goombas) {
+        for (enemy in creator.getEnemies()) {
             enemy.draw(game.batch)
         }
         for (item in items) {

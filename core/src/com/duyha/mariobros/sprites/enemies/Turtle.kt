@@ -1,8 +1,6 @@
-package com.duyha.mariobros.sprites
+package com.duyha.mariobros.sprites.enemies
 
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -14,7 +12,7 @@ import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
 import kotlin.experimental.or
 
-class Goomba(
+class Turtle(
         playScreen: PlayScreen,
         x: Float,
         y: Float
@@ -24,31 +22,21 @@ class Goomba(
     lateinit var walkAnimation: Animation<TextureRegion>
     lateinit var frames: Array<TextureRegion>
 
+    private var currentState: State
+    private var previousState: State
+    var shell: TextureRegion
+
+
     init {
-        frames = Array<TextureRegion>()
-        for (i in 0..2) {
-            frames.add(TextureRegion(playScreen.textureAtlas.findRegion("goomba"), i * 16, 0, 16, 16))
-        }
-        walkAnimation = Animation(0.4f, frames)
-        stateTime = 0f
-        setBounds(x, y, 16f / MarioBros.PPM, 16f / MarioBros.PPM)
+        frames = Array()
+        frames.add(TextureRegion(playScreen.textureAtlas.findRegion("turtle"), 0, 0, 16, 24))
+        frames.add(TextureRegion(playScreen.textureAtlas.findRegion("turtle"), 16, 0, 16, 24))
+        shell = TextureRegion(playScreen.textureAtlas.findRegion("turtle"), 64, 0, 16, 24)
+        walkAnimation = Animation(0.2f, frames)
+        currentState  = State.WALKING
+        previousState = State.WALKING
 
-    }
-
-    override fun update(dt: Float) {
-        stateTime += dt
-        if (setToDestroy && !destroyed) {
-            world.destroyBody(body)
-            destroyed = true
-            setRegion(TextureRegion(playScreen.textureAtlas.findRegion("goomba"), 32, 0, 16, 16))
-        } else if (!destroyed) {
-            body.linearVelocity = velocity
-            setPosition(body.position.x - width/2f, body.position.y - height/2f)
-            setRegion(walkAnimation.getKeyFrame(stateTime, true))
-        }
-
-        setPosition(body.position.x - width/2f, body.position.y - height/2f)
-        setRegion(walkAnimation.getKeyFrame(stateTime, true))
+        setBounds(getX(), getY(), 16 / MarioBros.PPM, 24 / MarioBros.PPM)
     }
 
     override fun defineEnemy() {
@@ -81,17 +69,50 @@ class Goomba(
         fixtureDef.restitution = 0.5f
         fixtureDef.filter.categoryBits = MarioBros.ENEMY_HEAD_BIT
         body.createFixture(fixtureDef).userData = this
-
-    }
-
-    override fun draw(batch: Batch) {
-        if (!destroyed || stateTime < 1) {
-            super.draw(batch)
-        }
     }
 
     override fun hitOnHead() {
-        setToDestroy = true
-        MarioBros.manager.get("audio/sounds/stomp.wav", Sound::class.java).play()
+        if (currentState != State.SHELL) {
+            currentState = State.SHELL
+            velocity.x = 0f;
+        }
+    }
+
+    override fun update(dt: Float) {
+        setRegion(getFrame(dt))
+        if (currentState == State.SHELL && stateTime > 5) {
+            currentState = State.WALKING
+            velocity.x = 1f
+        }
+
+        setPosition(body.position.x - width/2, body.position.y - 8 / MarioBros.PPM)
+        body.linearVelocity = velocity
+    }
+
+    private fun getFrame(dt: Float): TextureRegion {
+        val region: TextureRegion = when (currentState) {
+            State.SHELL -> {
+                shell
+            }
+            State.WALKING -> {
+                walkAnimation.getKeyFrame(stateTime, true)
+            }
+        }
+
+        if (velocity.x > 0 && !region.isFlipX) {
+            region.flip(true, false)
+        }
+        if (velocity.x < 0 && region.isFlipX) {
+            region.flip(true, false)
+        }
+        stateTime = if (currentState == previousState) stateTime + dt else 0f
+
+        previousState = currentState
+
+        return region
+    }
+
+    enum class State {
+        WALKING, SHELL
     }
 }

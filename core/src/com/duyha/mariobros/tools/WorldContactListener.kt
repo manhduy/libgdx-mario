@@ -1,13 +1,12 @@
 package com.duyha.mariobros.tools
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.physics.box2d.Contact
 import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.items.Item
-import com.duyha.mariobros.sprites.Enemy
+import com.duyha.mariobros.sprites.enemies.Enemy
 import com.duyha.mariobros.sprites.InteractiveTileObject
 import com.duyha.mariobros.sprites.Mario
 import kotlin.experimental.or

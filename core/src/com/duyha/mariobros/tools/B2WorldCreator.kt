@@ -1,14 +1,15 @@
 package com.duyha.mariobros.tools
 
 import com.badlogic.gdx.maps.objects.RectangleMapObject
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
 import com.duyha.mariobros.sprites.Brick
 import com.duyha.mariobros.sprites.Coin
-import com.duyha.mariobros.sprites.Goomba
+import com.duyha.mariobros.sprites.enemies.Enemy
+import com.duyha.mariobros.sprites.enemies.Goomba
+import com.duyha.mariobros.sprites.enemies.Turtle
 
 class B2WorldCreator(
         private val playScreen: PlayScreen
@@ -17,6 +18,7 @@ class B2WorldCreator(
     private val world = playScreen.world
     private val map = playScreen.map
     lateinit var goombas: Array<Goomba>
+    var turtles: Array<Turtle>
 
     init {
         val bodyDef = BodyDef()
@@ -62,11 +64,24 @@ class B2WorldCreator(
         }
 
         //create all goombas
-        goombas = com.badlogic.gdx.utils.Array<Goomba>()
+        goombas = Array<Goomba>()
         for (mapObj in map.layers[6].objects.getByType(RectangleMapObject::class.java)) {
             val rectangle = mapObj.rectangle
             goombas.add(Goomba(playScreen, rectangle.x / MarioBros.PPM, rectangle.y / MarioBros.PPM))
         }
+
+        //create all turtles
+        turtles = Array<Turtle>()
+        for (mapObj in map.layers[7].objects.getByType(RectangleMapObject::class.java)) {
+            val rectangle = mapObj.rectangle
+            turtles.add(Turtle(playScreen, rectangle.x / MarioBros.PPM, rectangle.y / MarioBros.PPM))
+        }
     }
 
+    fun getEnemies(): Array<Enemy> {
+        return Array<Enemy>().apply {
+            addAll(goombas)
+            addAll(turtles)
+        }
+    }
 }
