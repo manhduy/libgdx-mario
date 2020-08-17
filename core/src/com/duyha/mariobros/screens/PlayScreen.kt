@@ -19,6 +19,7 @@ import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.items.Item
 import com.duyha.mariobros.items.ItemDef
 import com.duyha.mariobros.items.Mushroom
+import com.duyha.mariobros.scenes.GameOverScreen
 import com.duyha.mariobros.scenes.Hud
 import com.duyha.mariobros.sprites.Goomba
 import com.duyha.mariobros.sprites.Mario
@@ -161,6 +162,16 @@ class PlayScreen(private val game: MarioBros) : Screen {
         //Set our batch to now draw what the Hud camera sees
         game.batch.projectionMatrix = hud.stage.camera.combined
         hud.stage.draw()
+
+        if (gameOver()) {
+            Gdx.app.log("Mario", "Game over")
+            game.screen = GameOverScreen(game)
+            dispose()
+        }
+    }
+
+    fun gameOver(): Boolean {
+        return (player.currentState == State.DEAD && player.getStateTimer() > 3f)
     }
 
     override fun resize(width: Int, height: Int) {

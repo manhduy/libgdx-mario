@@ -208,6 +208,8 @@ class Mario(
 
         stateTimer = if (currentState == previousState) stateTimer + dt else 0f
 
+        previousState = currentState
+
         return region
     }
 
@@ -231,6 +233,10 @@ class Mario(
     }
 
     fun isBig() = marioIsBig
+
+    fun getStateTimer() = stateTimer
+
+    fun idDead() = marioIsDead
 
     fun hit() {
         if (marioIsBig) {
