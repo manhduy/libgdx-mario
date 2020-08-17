@@ -31,9 +31,19 @@ class WorldContactListener : ContactListener {
             MarioBros.ENEMY_HEAD_BIT or MarioBros.MARIO_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.ENEMY_HEAD_BIT) {
                     (fixA.userData as Enemy).hitOnHead()
-                } else if (fixB.filterData.categoryBits == MarioBros.ENEMY_HEAD_BIT) {
+                } else {
                     (fixB.userData as Enemy).hitOnHead()
                 }
+            }
+            MarioBros.ENEMY_HEAD_BIT or MarioBros.OBJECT_BIT -> {
+                if (fixA.filterData.categoryBits == MarioBros.ENEMY_BIT) {
+                    (fixA.userData as Enemy).reverseVelocity(x = true, y = false)
+                } else {
+                    (fixB.userData as Enemy).reverseVelocity(x = true, y = false)
+                }
+            }
+            MarioBros.MARIO_BIT or MarioBros.ENEMY_BIT -> {
+                Gdx.app.log("MARIO", "Mario died")
             }
         }
 

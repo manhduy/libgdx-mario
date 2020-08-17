@@ -1,7 +1,7 @@
 package com.duyha.mariobros.sprites
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Animation
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
@@ -41,6 +41,7 @@ class Goomba(
             destroyed = true
             setRegion(TextureRegion(playScreen.textureAtlas.findRegion("goomba"), 32, 0, 16, 16))
         } else if (!destroyed) {
+            body.linearVelocity = velocity
             setPosition(body.position.x - width/2f, body.position.y - height/2f)
             setRegion(walkAnimation.getKeyFrame(stateTime, true))
         }
@@ -51,7 +52,7 @@ class Goomba(
 
     override fun defineEnemy() {
         val bodyDef = BodyDef()
-        bodyDef.position.set(32f / MarioBros.PPM, 32f / MarioBros.PPM)
+        bodyDef.position.set(x, y)
         bodyDef.type = BodyDef.BodyType.DynamicBody
         body = world.createBody(bodyDef)
 
@@ -63,23 +64,29 @@ class Goomba(
         fixtureDef.filter.maskBits = MarioBros.GROUND_BIT or  MarioBros.COIN_BIT or MarioBros.BRICK_BIT or
                 MarioBros.ENEMY_BIT or MarioBros.OBJECT_BIT or MarioBros.MARIO_BIT
 
-        body.createFixture(fixtureDef)
+        body.createFixture(fixtureDef).userData = this
 
         //Create the head
         val head = PolygonShape()
-        val vertice = arrayOf(
+        val vertices = arrayOf(
                 Vector2(-5f, 8f).scl(1 / MarioBros.PPM),
                 Vector2(5f, 8f).scl(1 / MarioBros.PPM),
                 Vector2(-3f, 3f).scl(1 / MarioBros.PPM),
-                Vector2(5f, 3f).scl(1 / MarioBros.PPM)
+                Vector2(3f, 3f).scl(1 / MarioBros.PPM)
         )
-        head.set(vertice)
+        head.set(vertices)
 
         fixtureDef.shape = head
         fixtureDef.restitution = 0.5f
         fixtureDef.filter.categoryBits = MarioBros.ENEMY_HEAD_BIT
         body.createFixture(fixtureDef).userData = this
 
+    }
+
+    override fun draw(batch: Batch) {
+        if (!destroyed || stateTime < 1) {
+            super.draw(batch)
+        }
     }
 
     override fun hitOnHead() {

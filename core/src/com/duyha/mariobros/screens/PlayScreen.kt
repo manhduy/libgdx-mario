@@ -62,7 +62,7 @@ class PlayScreen(private val game: MarioBros) : Screen {
         music.isLooping = true
         //music.play()
 
-        goomba = Goomba(this, .32f, .32f)
+        goomba = Goomba(this, 5.64f, .16f)
     }
 
     private fun update(dt: Float) {
@@ -85,15 +85,12 @@ class PlayScreen(private val game: MarioBros) : Screen {
 
     private fun handleInput(dt: Float) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-            println("Mario pressed W")
             player.body.applyLinearImpulse(Vector2(0f, 4f), player.body.worldCenter, true)
         }
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.body.linearVelocity.x <= 2) {
-            println("Mario pressed D")
             player.body.applyLinearImpulse(Vector2(0.1f, 0f), player.body.worldCenter, true)
         }
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.body.linearVelocity.x <= 2) {
-            println("Mario pressed A")
             player.body.applyLinearImpulse(Vector2(-0.1f, 0f), player.body.worldCenter, true)
         }
     }

@@ -2,6 +2,7 @@ package com.duyha.mariobros.sprites
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.duyha.mariobros.screens.PlayScreen
 
@@ -17,12 +18,22 @@ abstract class Enemy(
     protected var setToDestroy = false
     protected var destroyed = false
 
+    lateinit var velocity: Vector2
+
     init {
         this.setPosition(x, y)
         this.defineEnemy()
+        velocity = Vector2(1f, 0f)
     }
 
     protected abstract fun defineEnemy()
     abstract fun hitOnHead()
+
+    fun reverseVelocity(x: Boolean, y: Boolean) {
+        if (x)
+            velocity.x = - velocity.x
+        if (y)
+            velocity.y = -velocity.y
+    }
 
 }
