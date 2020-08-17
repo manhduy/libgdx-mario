@@ -50,8 +50,8 @@ class WorldContactListener : ContactListener {
                 }
             }
             MarioBros.ENEMY_BIT or MarioBros.ENEMY_BIT -> {
-                (fixA.userData as Enemy).reverseVelocity(x = true, y = false)
-                (fixB.userData as Enemy).reverseVelocity(x = true, y = false)
+                (fixA.userData as Enemy).onEnemyHit(fixB.userData as Enemy)
+                (fixB.userData as Enemy).onEnemyHit(fixA.userData as Enemy)
             }
             MarioBros.ITEM_BIT or MarioBros.OBJECT_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.ITEM_BIT) {

@@ -52,6 +52,15 @@ class Goomba(
         setRegion(walkAnimation.getKeyFrame(stateTime, true))
     }
 
+    override fun onEnemyHit(enemy: Enemy) {
+        if (enemy is Turtle) {
+            enemy.currentState = Turtle.State.MOVING_SHELL
+            setToDestroy = true
+        } else {
+            reverseVelocity(x = true, y = false)
+        }
+    }
+
     override fun defineEnemy() {
         val bodyDef = BodyDef()
         bodyDef.position.set(x, y)

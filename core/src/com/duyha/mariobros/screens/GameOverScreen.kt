@@ -1,4 +1,4 @@
-package com.duyha.mariobros.scenes
+package com.duyha.mariobros.screens
 
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx

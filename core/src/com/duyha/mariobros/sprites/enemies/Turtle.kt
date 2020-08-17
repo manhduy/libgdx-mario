@@ -1,12 +1,10 @@
 package com.duyha.mariobros.sprites.enemies
 
 import com.badlogic.gdx.graphics.g2d.Animation
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.CircleShape
-import com.badlogic.gdx.physics.box2d.FixtureDef
-import com.badlogic.gdx.physics.box2d.PolygonShape
+import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
@@ -31,6 +29,7 @@ class Turtle(
     var currentState: State
     private var previousState: State
     var shell: TextureRegion
+    private var deadRotationDegrees = 0f
 
 
     init {
@@ -86,6 +85,12 @@ class Turtle(
         }
     }
 
+    override fun draw(batch: Batch) {
+        if (!destroyed) {
+            super.draw(batch)
+        }
+    }
+
     fun kick(speed: Float) {
         velocity.x = speed
         currentState = State.MOVING_SHELL
@@ -99,13 +104,39 @@ class Turtle(
         }
 
         setPosition(body.position.x - width/2, body.position.y - 8 / MarioBros.PPM)
-        body.linearVelocity = velocity
+
+        if (currentState == State.DEAD) {
+            deadRotationDegrees += 3f
+            rotate(deadRotationDegrees)
+            if (stateTime > 5 && !destroyed) {
+                world.destroyBody(body)
+                destroyed = true
+            }
+        } else {
+            body.linearVelocity = velocity
+        }
+    }
+
+    override fun onEnemyHit(enemy: Enemy) {
+        if (enemy is Turtle) {
+            if (enemy.currentState == State.MOVING_SHELL && currentState != State.MOVING_SHELL) {
+                killed()
+            } else if (currentState == State.MOVING_SHELL && enemy.currentState == State.WALKING) {
+                return
+            } else {
+                reverseVelocity(x = true, y = false)
+            }
+
+        } else if (currentState != State.MOVING_SHELL) {
+            reverseVelocity(x = true, y = false)
+        }
     }
 
     private fun getFrame(dt: Float): TextureRegion {
         val region: TextureRegion = when (currentState) {
             State.STANDING_SHELL,
             State.MOVING_SHELL -> shell
+            State.DEAD,
             State.WALKING -> walkAnimation.getKeyFrame(stateTime, true)
         }
 
@@ -122,7 +153,18 @@ class Turtle(
         return region
     }
 
+    fun killed() {
+        currentState = State.DEAD
+        val filter = Filter()
+        filter.maskBits = MarioBros.NOTHING_BIT
+
+        body.fixtureList.forEach {
+            it.filterData = filter
+        }
+        body.applyLinearImpulse(Vector2(0f, 5f), body.worldCenter, true)
+    }
+
     enum class State {
-        WALKING, STANDING_SHELL, MOVING_SHELL
+        WALKING, STANDING_SHELL, MOVING_SHELL, DEAD
     }
 }

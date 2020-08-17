@@ -38,4 +38,6 @@ abstract class Enemy(
             velocity.y = -velocity.y
     }
 
+    abstract fun onEnemyHit(enemy: Enemy)
+
 }

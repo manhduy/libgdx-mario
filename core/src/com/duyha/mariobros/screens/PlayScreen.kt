@@ -19,7 +19,6 @@ import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.items.Item
 import com.duyha.mariobros.items.ItemDef
 import com.duyha.mariobros.items.Mushroom
-import com.duyha.mariobros.scenes.GameOverScreen
 import com.duyha.mariobros.scenes.Hud
 import com.duyha.mariobros.sprites.Mario
 import com.duyha.mariobros.sprites.State
