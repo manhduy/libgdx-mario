@@ -30,9 +30,9 @@ class WorldContactListener : ContactListener {
             }
             MarioBros.ENEMY_HEAD_BIT or MarioBros.MARIO_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.ENEMY_HEAD_BIT) {
-                    (fixA.userData as Enemy).hitOnHead()
+                    (fixA.userData as Enemy).hitOnHead(fixB.userData as Mario)
                 } else {
-                    (fixB.userData as Enemy).hitOnHead()
+                    (fixB.userData as Enemy).hitOnHead(fixA.userData as Mario)
                 }
             }
             MarioBros.ENEMY_BIT or MarioBros.OBJECT_BIT -> {
@@ -44,9 +44,9 @@ class WorldContactListener : ContactListener {
             }
             MarioBros.MARIO_BIT or MarioBros.ENEMY_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.MARIO_BIT) {
-                    (fixA.userData as Mario).hit()
+                    (fixA.userData as Mario).hit(fixB.userData as Enemy)
                 } else {
-                    (fixB.userData as Mario).hit()
+                    (fixB.userData as Mario).hit(fixA.userData as Enemy)
                 }
             }
             MarioBros.ENEMY_BIT or MarioBros.ENEMY_BIT -> {

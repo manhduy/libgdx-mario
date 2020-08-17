@@ -10,7 +10,8 @@ import com.badlogic.gdx.physics.box2d.*
 import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
-import javax.management.StandardEmitterMBean
+import com.duyha.mariobros.sprites.enemies.Enemy
+import com.duyha.mariobros.sprites.enemies.Turtle
 import kotlin.experimental.or
 
 class Mario(
@@ -238,23 +239,27 @@ class Mario(
 
     fun idDead() = marioIsDead
 
-    fun hit() {
-        if (marioIsBig) {
-            marioIsBig = false
-            timeToRedefineMario = true
-            setBounds(x, y, width, height / 2)
-            MarioBros.manager.get("audio/sounds/powerdown.wav", Sound::class.java).play()
+    fun hit(enemy: Enemy) {
+        if (enemy is Turtle && enemy.currentState == Turtle.State.STANDING_SHELL) {
+            enemy.kick(if (this.x <= enemy.x) Turtle.KICK_RIGHT_SPEDD else Turtle.KICK_LEFT_SPEDD)
         } else {
-            MarioBros.manager.get("audio/music/mario_music.ogg", Music::class.java).stop()
-            MarioBros.manager.get("audio/sounds/mariodie.wav", Sound::class.java).play()
-            marioIsDead = true
-            val filter = Filter()
-            filter.maskBits = MarioBros.NOTHING_BIT
-            for (fixture in body.fixtureList) {
-                fixture.filterData = filter
-            }
-            body.applyLinearImpulse(Vector2(0f, 4f), body.worldCenter, true)
+            if (marioIsBig) {
+                marioIsBig = false
+                timeToRedefineMario = true
+                setBounds(x, y, width, height / 2)
+                MarioBros.manager.get("audio/sounds/powerdown.wav", Sound::class.java).play()
+            } else {
+                MarioBros.manager.get("audio/music/mario_music.ogg", Music::class.java).stop()
+                MarioBros.manager.get("audio/sounds/mariodie.wav", Sound::class.java).play()
+                marioIsDead = true
+                val filter = Filter()
+                filter.maskBits = MarioBros.NOTHING_BIT
+                for (fixture in body.fixtureList) {
+                    fixture.filterData = filter
+                }
+                body.applyLinearImpulse(Vector2(0f, 4f), body.worldCenter, true)
 
+            }
         }
     }
 }

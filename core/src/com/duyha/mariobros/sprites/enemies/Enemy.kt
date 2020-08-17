@@ -1,10 +1,10 @@
 package com.duyha.mariobros.sprites.enemies
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 import com.duyha.mariobros.screens.PlayScreen
+import com.duyha.mariobros.sprites.Mario
 
 abstract class Enemy(
         protected val playScreen: PlayScreen,
@@ -28,7 +28,7 @@ abstract class Enemy(
     }
 
     protected abstract fun defineEnemy()
-    abstract fun hitOnHead()
+    abstract fun hitOnHead(mario: Mario)
     abstract fun update(dt: Float)
 
     fun reverseVelocity(x: Boolean, y: Boolean) {

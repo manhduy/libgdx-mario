@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
+import com.duyha.mariobros.sprites.Mario
 import kotlin.experimental.or
 
 class Turtle(
@@ -18,11 +19,16 @@ class Turtle(
         y: Float
 ) : Enemy(playScreen, x, y) {
 
+    companion object {
+        const val KICK_LEFT_SPEDD = -2f
+        const val KICK_RIGHT_SPEDD = 2f
+    }
+
     var stateTime: Float = 0f
     lateinit var walkAnimation: Animation<TextureRegion>
     lateinit var frames: Array<TextureRegion>
 
-    private var currentState: State
+    var currentState: State
     private var previousState: State
     var shell: TextureRegion
 
@@ -66,21 +72,28 @@ class Turtle(
         head.set(vertices)
 
         fixtureDef.shape = head
-        fixtureDef.restitution = 0.5f
+        fixtureDef.restitution = 1.5f
         fixtureDef.filter.categoryBits = MarioBros.ENEMY_HEAD_BIT
         body.createFixture(fixtureDef).userData = this
     }
 
-    override fun hitOnHead() {
-        if (currentState != State.SHELL) {
-            currentState = State.SHELL
+    override fun hitOnHead(mario: Mario) {
+        if (currentState != State.STANDING_SHELL) {
+            currentState = State.STANDING_SHELL
             velocity.x = 0f;
+        } else {
+            kick(if (mario.x < this.x) KICK_RIGHT_SPEDD else KICK_LEFT_SPEDD)
         }
+    }
+
+    fun kick(speed: Float) {
+        velocity.x = speed
+        currentState = State.MOVING_SHELL
     }
 
     override fun update(dt: Float) {
         setRegion(getFrame(dt))
-        if (currentState == State.SHELL && stateTime > 5) {
+        if (currentState == State.STANDING_SHELL && stateTime > 5) {
             currentState = State.WALKING
             velocity.x = 1f
         }
@@ -91,12 +104,9 @@ class Turtle(
 
     private fun getFrame(dt: Float): TextureRegion {
         val region: TextureRegion = when (currentState) {
-            State.SHELL -> {
-                shell
-            }
-            State.WALKING -> {
-                walkAnimation.getKeyFrame(stateTime, true)
-            }
+            State.STANDING_SHELL,
+            State.MOVING_SHELL -> shell
+            State.WALKING -> walkAnimation.getKeyFrame(stateTime, true)
         }
 
         if (velocity.x > 0 && !region.isFlipX) {
@@ -113,6 +123,6 @@ class Turtle(
     }
 
     enum class State {
-        WALKING, SHELL
+        WALKING, STANDING_SHELL, MOVING_SHELL
     }
 }

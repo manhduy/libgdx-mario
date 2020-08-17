@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
+import com.duyha.mariobros.sprites.Mario
 import kotlin.experimental.or
 
 class Goomba(
@@ -90,7 +91,7 @@ class Goomba(
         }
     }
 
-    override fun hitOnHead() {
+    override fun hitOnHead(mario: Mario) {
         setToDestroy = true
         MarioBros.manager.get("audio/sounds/stomp.wav", Sound::class.java).play()
     }
