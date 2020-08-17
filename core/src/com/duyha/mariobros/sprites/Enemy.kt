@@ -24,10 +24,12 @@ abstract class Enemy(
         this.setPosition(x, y)
         this.defineEnemy()
         velocity = Vector2(1f, 0f)
+        body.isActive = false
     }
 
     protected abstract fun defineEnemy()
     abstract fun hitOnHead()
+    abstract fun update(dt: Float)
 
     fun reverseVelocity(x: Boolean, y: Boolean) {
         if (x)

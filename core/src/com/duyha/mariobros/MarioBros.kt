@@ -16,6 +16,7 @@ class MarioBros : Game() {
         const val V_HEIGHT = 208f
         const val PPM = 100f //Pixel per meter
 
+        const val NOTHING_BIT = 0.toShort()
         const val GROUND_BIT = 1.toShort()
         const val MARIO_BIT = 2.toShort()
         const val BRICK_BIT = 4.toShort()
@@ -24,6 +25,8 @@ class MarioBros : Game() {
         const val OBJECT_BIT: Short = 32
         const val ENEMY_BIT: Short = 64
         const val ENEMY_HEAD_BIT: Short = 128
+        const val ITEM_BIT: Short = 256
+        const val MARIO_HEAD_BIT: Short = 512
 
         lateinit var manager: AssetManager
     }
@@ -37,6 +40,11 @@ class MarioBros : Game() {
         manager.load("audio/sounds/coin.wav", Sound::class.java)
         manager.load("audio/sounds/bump.wav", Sound::class.java)
         manager.load("audio/sounds/breakblock.wav", Sound::class.java)
+        manager.load("audio/sounds/powerup_spawn.wav", Sound::class.java)
+        manager.load("audio/sounds/powerup.wav", Sound::class.java)
+        manager.load("audio/sounds/powerdown.wav", Sound::class.java)
+        manager.load("audio/sounds/stomp.wav", Sound::class.java)
+        manager.load("audio/sounds/mariodie.wav", Sound::class.java)
         manager.finishLoading()
 
         setScreen(PlayScreen(this))

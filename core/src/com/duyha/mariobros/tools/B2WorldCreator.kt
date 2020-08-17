@@ -3,10 +3,12 @@ package com.duyha.mariobros.tools
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.physics.box2d.*
+import com.badlogic.gdx.utils.Array
 import com.duyha.mariobros.MarioBros
 import com.duyha.mariobros.screens.PlayScreen
 import com.duyha.mariobros.sprites.Brick
 import com.duyha.mariobros.sprites.Coin
+import com.duyha.mariobros.sprites.Goomba
 
 class B2WorldCreator(
         private val playScreen: PlayScreen
@@ -14,6 +16,7 @@ class B2WorldCreator(
 
     private val world = playScreen.world
     private val map = playScreen.map
+    lateinit var goombas: Array<Goomba>
 
     init {
         val bodyDef = BodyDef()
@@ -50,15 +53,19 @@ class B2WorldCreator(
 
         //Create coins bodies/fixtures
         for (mapObj in map.layers[4].objects.getByType(RectangleMapObject::class.java)) {
-            val rectangle = mapObj.rectangle
-
-            Coin(playScreen, rectangle)
+            Coin(playScreen, mapObj)
         }
 
         //Create bricks bodies/fixtures
         for (mapObj in map.layers[5].objects.getByType(RectangleMapObject::class.java)) {
+            Brick(playScreen, mapObj)
+        }
+
+        //create all goombas
+        goombas = com.badlogic.gdx.utils.Array<Goomba>()
+        for (mapObj in map.layers[6].objects.getByType(RectangleMapObject::class.java)) {
             val rectangle = mapObj.rectangle
-            Brick(playScreen, rectangle)
+            goombas.add(Goomba(playScreen, rectangle.x / MarioBros.PPM, rectangle.y / MarioBros.PPM))
         }
     }
 

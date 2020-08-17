@@ -1,5 +1,6 @@
 package com.duyha.mariobros.sprites
 
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -34,7 +35,7 @@ class Goomba(
 
     }
 
-    fun update(dt: Float) {
+    override fun update(dt: Float) {
         stateTime += dt
         if (setToDestroy && !destroyed) {
             world.destroyBody(body)
@@ -58,7 +59,7 @@ class Goomba(
 
         val fixtureDef = FixtureDef()
         val circleShape = CircleShape()
-        circleShape.radius = 5f / MarioBros.PPM
+        circleShape.radius = 6f / MarioBros.PPM
         fixtureDef.shape = circleShape
         fixtureDef.filter.categoryBits = MarioBros.ENEMY_BIT
         fixtureDef.filter.maskBits = MarioBros.GROUND_BIT or  MarioBros.COIN_BIT or MarioBros.BRICK_BIT or
@@ -91,5 +92,6 @@ class Goomba(
 
     override fun hitOnHead() {
         setToDestroy = true
+        MarioBros.manager.get("audio/sounds/stomp.wav", Sound::class.java).play()
     }
 }

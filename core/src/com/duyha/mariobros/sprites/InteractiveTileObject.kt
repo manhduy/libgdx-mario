@@ -1,5 +1,7 @@
 package com.duyha.mariobros.sprites
 
+import com.badlogic.gdx.maps.MapObject
+import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Rectangle
@@ -9,11 +11,13 @@ import com.duyha.mariobros.screens.PlayScreen
 
 abstract class InteractiveTileObject(
         private val playScreen: PlayScreen,
-        private val bounds: Rectangle
+        private val mapObject: MapObject
 ) {
 
     private var world = playScreen.world
     protected var map = playScreen.map
+
+    private val bounds: Rectangle = (mapObject as RectangleMapObject).rectangle
 
     var fixture: Fixture
     var body: Body
@@ -34,7 +38,7 @@ abstract class InteractiveTileObject(
 
     }
 
-    abstract fun onHeadHit()
+    abstract fun onHeadHit(mario: Mario)
 
     fun setCategoryFilter(filterBit: Short) {
 

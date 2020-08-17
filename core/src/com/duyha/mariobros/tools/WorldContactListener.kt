@@ -6,8 +6,10 @@ import com.badlogic.gdx.physics.box2d.ContactImpulse
 import com.badlogic.gdx.physics.box2d.ContactListener
 import com.badlogic.gdx.physics.box2d.Manifold
 import com.duyha.mariobros.MarioBros
+import com.duyha.mariobros.items.Item
 import com.duyha.mariobros.sprites.Enemy
 import com.duyha.mariobros.sprites.InteractiveTileObject
+import com.duyha.mariobros.sprites.Mario
 import kotlin.experimental.or
 
 class WorldContactListener : ContactListener {
@@ -18,16 +20,15 @@ class WorldContactListener : ContactListener {
 
         val cDef = fixA.filterData.categoryBits or fixB.filterData.categoryBits
 
-        if (fixA.userData == "head" || fixB.userData == "head") {
-            val head = if (fixA.userData == "head") fixA else fixB
-            val fixObj = if (head == fixA) fixB else fixA
-
-            if (fixObj.userData is InteractiveTileObject) {
-                (fixObj.userData as InteractiveTileObject).onHeadHit()
-            }
-        }
-
         when (cDef) {
+            MarioBros.MARIO_HEAD_BIT or MarioBros.BRICK_BIT,
+            MarioBros.MARIO_HEAD_BIT or MarioBros.COIN_BIT -> {
+                if (fixA.filterData.categoryBits == MarioBros.MARIO_HEAD_BIT) {
+                    (fixB.userData as InteractiveTileObject).onHeadHit(fixA.userData as Mario)
+                } else {
+                    (fixA.userData as InteractiveTileObject).onHeadHit(fixB.userData as Mario)
+                }
+            }
             MarioBros.ENEMY_HEAD_BIT or MarioBros.MARIO_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.ENEMY_HEAD_BIT) {
                     (fixA.userData as Enemy).hitOnHead()
@@ -35,7 +36,7 @@ class WorldContactListener : ContactListener {
                     (fixB.userData as Enemy).hitOnHead()
                 }
             }
-            MarioBros.ENEMY_HEAD_BIT or MarioBros.OBJECT_BIT -> {
+            MarioBros.ENEMY_BIT or MarioBros.OBJECT_BIT -> {
                 if (fixA.filterData.categoryBits == MarioBros.ENEMY_BIT) {
                     (fixA.userData as Enemy).reverseVelocity(x = true, y = false)
                 } else {
@@ -43,7 +44,29 @@ class WorldContactListener : ContactListener {
                 }
             }
             MarioBros.MARIO_BIT or MarioBros.ENEMY_BIT -> {
-                Gdx.app.log("MARIO", "Mario died")
+                if (fixA.filterData.categoryBits == MarioBros.MARIO_BIT) {
+                    (fixA.userData as Mario).hit()
+                } else {
+                    (fixB.userData as Mario).hit()
+                }
+            }
+            MarioBros.ENEMY_BIT or MarioBros.ENEMY_BIT -> {
+                (fixA.userData as Enemy).reverseVelocity(x = true, y = false)
+                (fixB.userData as Enemy).reverseVelocity(x = true, y = false)
+            }
+            MarioBros.ITEM_BIT or MarioBros.OBJECT_BIT -> {
+                if (fixA.filterData.categoryBits == MarioBros.ITEM_BIT) {
+                    (fixA.userData as Item).reverseVelocity(x = true, y = false)
+                } else {
+                    (fixB.userData as Item).reverseVelocity(x = true, y = false)
+                }
+            }
+            MarioBros.ITEM_BIT or MarioBros.MARIO_BIT -> {
+                if (fixA.filterData.categoryBits == MarioBros.ITEM_BIT) {
+                    (fixA.userData as Item).use(fixB.userData as Mario)
+                } else {
+                    (fixB.userData as Item).use(fixA.userData as Mario)
+                }
             }
         }
 
