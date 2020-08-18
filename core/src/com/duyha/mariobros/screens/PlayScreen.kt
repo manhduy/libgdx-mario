@@ -67,7 +67,7 @@ class PlayScreen(private val game: MarioBros) : Screen {
 
         music = MarioBros.manager.get("audio/music/mario_music.ogg")
         music.isLooping = true
-        //music.play()
+        music.play()
 
         items = Array()
         itemToSpawn = LinkedBlockingDeque()

@@ -1,5 +1,6 @@
 package com.duyha.mariobros.scenes
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -57,6 +58,8 @@ class Hud(
         table.add(countDownLabel).expandX()
 
         stage.addActor(table)
+
+        Gdx.input.inputProcessor = stage
     }
 
     fun update(dt: Float) {
